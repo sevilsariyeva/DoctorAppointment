@@ -10,37 +10,47 @@ const Navbar = () => {
 
   return (
     <div className="flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-400">
+      {/* Logo */}
       <img
         onClick={() => navigate("/")}
         className="w-44 cursor-pointer"
         src={assets.logo}
-        alt=""
+        alt="Logo"
       />
+
+      {/* Navigation Links */}
       <ul className="hidden md:flex items-start gap-5 font-medium">
-        <NavLink to="/">
+        <NavLink to="/" className="hover:text-primary">
           <li className="py-1">HOME</li>
-          <hr className="border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden" />
         </NavLink>
-        <NavLink to="/doctors">
+        <NavLink to="/doctors" className="hover:text-primary">
           <li className="py-1">ALL DOCTORS</li>
-          <hr className="border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden" />
         </NavLink>
-        <NavLink to="/about">
+        <NavLink to="/about" className="hover:text-primary">
           <li className="py-1">ABOUT</li>
-          <hr className="border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden" />
         </NavLink>
-        <NavLink to="/contact">
+        <NavLink to="/contact" className="hover:text-primary">
           <li className="py-1">CONTACT</li>
-          <hr className="border-none outline-none h-0.5 bg-primary w-3/5 m-auto hidden" />
         </NavLink>
       </ul>
+
+      {/* Profile and Menu */}
       <div className="flex items-center gap-4">
+        {/* Profile Section */}
         {token ? (
-          <div className="flex ietms-center gap-2 cursor-pointer group relative">
-            <img className="w-8 rounded-full" src={assets.profile_pic} alt="" />
-            <img className="w-2.5" src={assets.dropdown_icon} alt="" />
-            <div className="absolute top-0 right-0 pt-14 text-base font-medium text-gray-600 z-20 hidden group-hover:block">
-              <div className="min-w-48 bg-stone-100 rounded flex flex-col gap-4 p-4">
+          <div className="flex items-center gap-2 cursor-pointer group relative">
+            <img
+              className="w-8 h-8 rounded-full object-cover"
+              src={assets.profile_pic}
+              alt="Profile"
+            />
+            <img
+              className="w-2.5"
+              src={assets.dropdown_icon}
+              alt="Dropdown Icon"
+            />
+            <div className="absolute top-14 right-0 text-base font-medium text-gray-600 z-20 hidden group-hover:block">
+              <div className="min-w-48 bg-stone-100 rounded shadow-lg flex flex-col gap-4 p-4">
                 <p
                   onClick={() => navigate("my-profile")}
                   className="hover:text-black cursor-pointer"
@@ -70,6 +80,45 @@ const Navbar = () => {
             Create Account
           </button>
         )}
+
+        {/* Mobile Menu Icon */}
+        <img
+          onClick={() => setShowMenu(true)}
+          className="w-6 md:hidden cursor-pointer"
+          src={assets.menu_icon}
+          alt="Menu Icon"
+        />
+
+        {/* Mobile Menu */}
+        <div
+          className={`fixed top-0 left-0 z-30 bg-white transition-transform duration-300 ease-in-out ${
+            showMenu ? "translate-x-0" : "translate-x-full"
+          } w-full h-full md:hidden`}
+        >
+          <div className="flex justify-between items-center p-4 border-b border-gray-300">
+            <img className="w-36" src={assets.logo} alt="Logo" />
+            <img
+              onClick={() => setShowMenu(false)}
+              className="w-6 cursor-pointer"
+              src={assets.cross_icon}
+              alt="Close Menu"
+            />
+          </div>
+          <ul className="flex flex-col items-center gap-4 mt-5 px-5 text-lg font-medium">
+            <NavLink to="/" onClick={() => setShowMenu(false)}>
+              <p className="px-2 py-2">HOME</p>
+            </NavLink>
+            <NavLink to="/doctors" onClick={() => setShowMenu(false)}>
+              <p className="px-2 py-2">ALL DOCTORS</p>
+            </NavLink>
+            <NavLink to="/about" onClick={() => setShowMenu(false)}>
+              <p className="px-2 py-2">ABOUT</p>
+            </NavLink>
+            <NavLink to="/contact" onClick={() => setShowMenu(false)}>
+              <p className="px-2 py-2">CONTACT</p>
+            </NavLink>
+          </ul>
+        </div>
       </div>
     </div>
   );
