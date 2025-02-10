@@ -1,15 +1,20 @@
-import { createContext, useState } from "react";
-import PropTypes from "prop-types"; // Import PropTypes
+import { createContext, useState, useEffect } from "react";
+import PropTypes from "prop-types";
 
 // Create the context
 export const AdminContext = createContext();
 
 // Define the context provider
 const AdminContextProvider = ({ children }) => {
-  const [aToken, setAToken] = useState(
-    localStorage.getItem("aToken") ? localStorage.getItem("aToken") : ""
-  );
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const initialToken = localStorage.getItem("aToken") || "";
+  const [aToken, setAToken] = useState(initialToken);
+
+  useEffect(() => {
+    localStorage.setItem("aToken", aToken);
+  }, [aToken]); // `aToken` dəyişəndə localStorage yenilənir
+
+  const backendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
+
   const value = {
     aToken,
     setAToken,
@@ -23,7 +28,7 @@ const AdminContextProvider = ({ children }) => {
 
 // Prop validation for children
 AdminContextProvider.propTypes = {
-  children: PropTypes.node.isRequired, // Ensures that children prop is passed and is a valid React node
+  children: PropTypes.node.isRequired,
 };
 
 export default AdminContextProvider;

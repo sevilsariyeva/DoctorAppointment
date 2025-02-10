@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { assets } from "../../assets/assets";
+import { useContext } from "react";
 import { AdminContext } from "../../context/AdminContext";
 import { toast } from "react-toastify";
+import axios from "axios";
+
 const AddDoctor = () => {
-  const [docImg, setDocImg] = useState(false);
+  const [docImg, setDocImg] = useState(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,17 +18,45 @@ const AddDoctor = () => {
   const [address1, setAddress1] = useState("");
   const [address2, setAddress2] = useState("");
 
-  const [backendUrl, aToken] = useContext(AdminContext);
+  const { backendUrl, aToken } = useContext(AdminContext);
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
-
     try {
       if (!docImg) {
         return toast.error("Image Not Selected");
       }
-    } catch (error) {}
+      const formData = new FormData();
+      formData.append("image", docImg);
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("password", password);
+      formData.append("experience", experience);
+      formData.append("fees", Number(fees));
+      formData.append("about", about);
+      formData.append("speciality", speciality);
+      formData.append("degree", degree);
+      formData.append("address1", address1);
+      formData.append("address2", address2);
+      console.log("Token being sent:", aToken?.token || aToken);
+      console.log({ Authorization: `Bearer ${aToken?.token || aToken}` });
+
+      const { data } = await axios.post(
+        `${backendUrl}/api/admin/add-doctor`,
+        formData,
+        { headers: { Authorization: `Bearer ${aToken?.token || aToken}` } } // Ensure it's a string
+      );
+      if (data.success) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Failed to add doctor. Check console for details.");
+    }
   };
+
   return (
     <form onSubmit={onSubmitHandler} className="m-5 w-full">
       <p className="mb-3 text-lg font-medium">Add Doctor</p>

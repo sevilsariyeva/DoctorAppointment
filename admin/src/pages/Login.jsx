@@ -10,12 +10,15 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const { setAToken, backendUrl } = useContext(AdminContext);
+  console.log("Backend URL:", backendUrl); // Ensure the correct URL is printed
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
     console.log("Login button clicked!");
     try {
       console.log("Submitting login request...");
+      console.log(backendUrl + "/api/admin/login");
+      console.log(state);
       if (state === "Admin") {
         const { data } = await axios.post(backendUrl + "/api/admin/login", {
           email,
@@ -23,13 +26,16 @@ const Login = () => {
         });
         console.log("API Response:", data);
 
-        if (data.success) {
-          console.log("Token received:", data.token);
-          localStorage.setItem("aToken", data.token);
-          setAToken(data.token);
+        if (data?.token?.result) {
+          const token = data.token.result; // Extract the token from the result property
+          console.log("Token received:", token);
+
+          // Store the token in localStorage
+          localStorage.setItem("aToken", token);
+          setAToken(token);
           toast.success("Login successful!");
         } else {
-          toast.error(data.message);
+          toast.error(data?.message || "Login failed!");
         }
       } else {
         console.log("Doctor login not implemented yet.");
