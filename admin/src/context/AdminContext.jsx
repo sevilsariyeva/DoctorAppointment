@@ -29,12 +29,9 @@ const AdminContextProvider = ({ children }) => {
     }
 
     try {
-      const { data } = await axios.get(
-        `${backendUrl}/api/doctors/all-doctors`,
-        {
-          headers: { aToken },
-        }
-      );
+      const { data } = await axios.get(`${backendUrl}/api/doctor/all-doctors`, {
+        headers: { aToken },
+      });
 
       console.log("Response from backend:", data);
 
@@ -56,7 +53,7 @@ const AdminContextProvider = ({ children }) => {
       return;
     }
     console.log("Doctor ID:", doctorId);
-    const apiUrl = `${backendUrl}/api/doctors/change-availability/${doctorId}`;
+    const apiUrl = `${backendUrl}/api/doctor/change-availability/${doctorId}`;
     console.log("API URL:", apiUrl);
 
     try {
@@ -77,7 +74,6 @@ const AdminContextProvider = ({ children }) => {
     const success = await updateDoctorAvailability(doctorId, newAvailability);
 
     if (success) {
-      // Məlumatları yenilə
       getAllDoctors();
     }
   };
