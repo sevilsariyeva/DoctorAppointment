@@ -9,13 +9,22 @@ const AppContextProvider = (props) => {
   const currencySymbol = "$";
   const backendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
   const [doctors, setDoctors] = useState([]);
+  const [userData, setUserData] = useState({
+    name: "",
+    email: "",
+    image: "",
+    phone: "",
+    address: {
+      line1: "",
+      line2: "",
+    },
+    gender: "",
+    dob: "",
+  });
 
-  const value = {
-    doctors,
-    currencySymbol,
-    setDoctors,
-    backendUrl,
-  };
+  const [token, setToken] = useState(
+    localStorage.getItem("token") ? localStorage.getItem("token") : false
+  );
 
   const getDoctorsData = async () => {
     try {
@@ -33,10 +42,40 @@ const AppContextProvider = (props) => {
       toast.error(error.message || "Network error");
     }
   };
+  const loadUserProfileData = async () => {
+    const { data } = await axios
+      .get(backendUrl + "/api/user/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((response) => {
+        console.log("Profile data:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching profile:", error);
+      });
+  };
 
+  const value = {
+    doctors,
+    currencySymbol,
+    setDoctors,
+    backendUrl,
+    token,
+    setToken,
+    userData,
+    setUserData,
+    loadUserProfileData,
+  };
   useEffect(() => {
     getDoctorsData();
   }, []);
+  useEffect(() => {
+    if (token) {
+      loadUserProfileData();
+    } else {
+      setUserData(false);
+    }
+  }, [token]);
   return (
     <AppContext.Provider value={value}>{props.children}</AppContext.Provider>
   );
