@@ -5,24 +5,11 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const MyProfile = () => {
-  const { userData, setUserData, backendUrl, token } = useContext(AppContext);
+  const { userData, setUserData, backendUrl, token, fetchUserProfile } =
+    useContext(AppContext);
   const [isEdit, setIsEdit] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const fetchUserProfile = async () => {
-    try {
-      const { data } = await axios.get(`${backendUrl}/api/user/profile`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUserData(data);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-      toast.error("Failed to load user profile");
-      setLoading(false);
-    }
-  };
 
   const updateUserProfileData = async () => {
     try {
@@ -71,6 +58,7 @@ const MyProfile = () => {
 
   useEffect(() => {
     fetchUserProfile();
+    setLoading(false);
   }, []);
 
   const handleImageChange = (e) => {

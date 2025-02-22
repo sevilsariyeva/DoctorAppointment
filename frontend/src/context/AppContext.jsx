@@ -26,35 +26,25 @@ const AppContextProvider = ({ children }) => {
     };
     fetchDoctors();
   }, [backendUrl]);
+  const fetchUserProfile = async () => {
+    if (!token) {
+      setUserData(null);
+      return;
+    }
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/user/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUserData(data);
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      toast.error("Failed to load user profile");
+      setUserData(null);
+    }
+  };
 
-  // Fetch user data when token changes (on login/logout)
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (token) {
-        console.log("Fetching user profile with token:", token); // Debugging log
-
-        try {
-          const { data } = await axios.get(`${backendUrl}/api/user/profile`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-
-          console.log("User data received:", data); // Debugging log
-          if (data) {
-            setUserData(data); // If response contains data, update userData
-          } else {
-            console.warn("No data received for user profile.");
-            setUserData(null);
-          }
-        } catch (error) {
-          console.error("Error fetching user profile:", error);
-          toast.error("Failed to load user profile");
-          setUserData(null); // Clear user data on error
-        }
-      } else {
-        console.log("No token found, clearing user data.");
-        setUserData(null); // Clear user data if no token exists
-      }
-    };
+    fetchUserProfile();
   }, [token, backendUrl]);
 
   return (
@@ -68,6 +58,7 @@ const AppContextProvider = ({ children }) => {
         setToken,
         userData,
         setUserData,
+        fetchUserProfile,
       }}
     >
       {children}
