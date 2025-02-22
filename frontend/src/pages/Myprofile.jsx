@@ -9,6 +9,7 @@ const MyProfile = () => {
     useContext(AppContext);
   const [isEdit, setIsEdit] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const updateUserProfileData = async () => {
@@ -66,9 +67,9 @@ const MyProfile = () => {
     if (file) {
       console.log("Selected File:", file);
       setImageUrl(file);
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
-
   return loading ? (
     <p>Loading...</p>
   ) : (
@@ -80,16 +81,20 @@ const MyProfile = () => {
               <img
                 className="w-36 rounded"
                 src={
-                  userData.imageUrl?.startsWith("http")
+                  previewUrl
+                    ? previewUrl
+                    : userData.imageUrl?.startsWith("http")
                     ? userData.imageUrl
-                    : `${backendUrl}${userData.imageUrl}`
+                    : `${backendUrl}${
+                        userData.imageUrl || assets.defaultProfileImage
+                      }`
                 }
                 alt="Profile"
               />
 
               <img
                 className="w-10 absolute bottom-12 right-12"
-                src={imageUrl ? "" : assets.upload_icon}
+                src={assets.upload_icon}
                 alt="Profile"
               />
             </div>
