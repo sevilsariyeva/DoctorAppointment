@@ -65,7 +65,7 @@ const Doctors = () => {
             filterDoc.map((item) => (
               <div
                 onClick={() => navigate(`/appointment/${item.id}`)}
-                className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500"
+                className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer transition-all duration-300 ease-in-out transform hover:translate-y-[-5px] active:translate-y-[5px]"
                 key={item._id || Math.random()}
               >
                 <img

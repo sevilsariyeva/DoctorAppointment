@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { AppContext } from "../context/AppContext";
 const MyAppointments = () => {
-  const { doctors } = useContext(AppContext);
+  const { doctors, backendUrl } = useContext(AppContext);
   return (
     <div>
       <p className="pb-3 mt-12 font-medium text-zinc-700 border-b">
@@ -14,14 +14,18 @@ const MyAppointments = () => {
             key={index}
           >
             <div>
-              <img className="w-32 bg-indigo-50" src={item.image} alt="" />
+              <img
+                className="w-32 bg-indigo-50"
+                src={backendUrl + item.image}
+                alt=""
+              />
             </div>
             <div className="flex-1 text-sm text-zinc-600">
               <p className="text-neutral-800 font-semibold">{item.name}</p>
               <p>{item.speciality}</p>
               <p className="text-zinc-700 font-medium mt-1">Address:</p>
-              <p className="text-xs">{item.address.line1}</p>
-              <p className="text-xs">{item.address.line2}</p>
+              <p className="text-xs">{item.address?.line1}</p>
+              <p className="text-xs">{item.address?.line2}</p>
               <p className="text-xs mt-1">
                 <span className="text-sm text-neutral-700 font-medium">
                   Date & Time:

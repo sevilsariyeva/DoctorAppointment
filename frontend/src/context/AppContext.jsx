@@ -12,20 +12,6 @@ const AppContextProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token") || "");
 
-  useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        const { data } = await axios.get(
-          `${backendUrl}/api/doctor/all-doctors`
-        );
-        setDoctors(Array.isArray(data) ? data : data.doctors || []);
-      } catch (error) {
-        console.error("Error fetching doctors:", error);
-        toast.error(error.message || "Network error");
-      }
-    };
-    fetchDoctors();
-  }, [backendUrl]);
   const fetchUserProfile = async () => {
     if (!token) {
       setUserData(null);
@@ -42,10 +28,26 @@ const AppContextProvider = ({ children }) => {
       setUserData(null);
     }
   };
+  const fetchDoctors = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/doctor/all-doctors`);
+      setDoctors(Array.isArray(data) ? data : data.doctors || []);
+    } catch (error) {
+      console.error("Error fetching doctors:", error);
+      toast.error(error.message || "Network error");
+    }
+  };
+  useEffect(() => {
+    fetchDoctors();
+  }, [backendUrl]);
 
   useEffect(() => {
-    fetchUserProfile();
-  }, [token, backendUrl]);
+    if (token) {
+      fetchUserProfile();
+    } else {
+      setUserData(null);
+    }
+  }, [token]);
 
   return (
     <AppContext.Provider
@@ -59,6 +61,7 @@ const AppContextProvider = ({ children }) => {
         userData,
         setUserData,
         fetchUserProfile,
+        fetchDoctors,
       }}
     >
       {children}

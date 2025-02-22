@@ -12,6 +12,14 @@ const MyProfile = () => {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    if (token) {
+      fetchUserProfile();
+    }
+    setLoading(false);
+  }, [token]);
+
+  if (loading) return <p>Loading...</p>;
   const updateUserProfileData = async () => {
     try {
       const formData = new FormData();
@@ -56,11 +64,6 @@ const MyProfile = () => {
       toast.error("Something went wrong while updating the profile.");
     }
   };
-
-  useEffect(() => {
-    fetchUserProfile();
-    setLoading(false);
-  }, []);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
