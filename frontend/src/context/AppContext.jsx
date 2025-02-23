@@ -8,9 +8,33 @@ const AppContextProvider = ({ children }) => {
   const currencySymbol = "$";
   const backendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
+  const getValidToken = () => {
+    const storedToken = localStorage.getItem("token");
+    const expiryTime = localStorage.getItem("tokenExpiry");
+
+    if (storedToken && expiryTime && Date.now() < Number(expiryTime)) {
+      return storedToken;
+    }
+    localStorage.removeItem("token");
+    localStorage.removeItem("tokenExpiry");
+    return "";
+  };
+
   const [doctors, setDoctors] = useState([]);
   const [userData, setUserData] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("token") || "");
+  const [token, setToken] = useState(getValidToken());
+
+  const setAuthToken = (newToken) => {
+    if (newToken) {
+      const expiryTime = Date.now() + 120 * 60 * 1000; // 2 hours
+      localStorage.setItem("token", newToken);
+      localStorage.setItem("tokenExpiry", expiryTime);
+    } else {
+      localStorage.removeItem("token");
+      localStorage.removeItem("tokenExpiry");
+    }
+    setToken(newToken);
+  };
 
   const fetchUserProfile = async () => {
     if (!token) {
@@ -28,6 +52,7 @@ const AppContextProvider = ({ children }) => {
       setUserData(null);
     }
   };
+
   const fetchDoctors = async () => {
     try {
       const { data } = await axios.get(`${backendUrl}/api/doctor/all-doctors`);
@@ -37,6 +62,7 @@ const AppContextProvider = ({ children }) => {
       toast.error(error.message || "Network error");
     }
   };
+
   useEffect(() => {
     fetchDoctors();
   }, [backendUrl]);
@@ -57,7 +83,7 @@ const AppContextProvider = ({ children }) => {
         setDoctors,
         backendUrl,
         token,
-        setToken,
+        setToken: setAuthToken, // Updated to use setAuthToken for expiry management
         userData,
         setUserData,
         fetchUserProfile,
