@@ -26,7 +26,7 @@ const AppContextProvider = ({ children }) => {
 
   const setAuthToken = (newToken) => {
     if (newToken) {
-      const expiryTime = Date.now() + 120 * 60 * 1000; // 2 hours
+      const expiryTime = Date.now() + 120 * 60 * 1000;
       localStorage.setItem("token", newToken);
       localStorage.setItem("tokenExpiry", expiryTime);
     } else {
@@ -83,7 +83,7 @@ const AppContextProvider = ({ children }) => {
         setDoctors,
         backendUrl,
         token,
-        setToken: setAuthToken, // Updated to use setAuthToken for expiry management
+        setToken: setAuthToken,
         userData,
         setUserData,
         fetchUserProfile,

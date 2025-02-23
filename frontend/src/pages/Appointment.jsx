@@ -49,7 +49,6 @@ const Appointment = () => {
       endTime.setDate(today.getDate() + i);
       endTime.setHours(21, 0, 0, 0);
 
-      // For today, adjust start time; otherwise start at 10:00
       if (today.getDate() === currentDate.getDate()) {
         currentDate.setHours(
           currentDate.getHours() > 10 ? currentDate.getHours() + 1 : 10
@@ -66,10 +65,27 @@ const Appointment = () => {
           hour: "2-digit",
           minute: "2-digit",
         });
-        timeSlots.push({
-          dateTime: new Date(currentDate),
-          time: formattedTime,
-        });
+        let day = currentDate.getDate();
+        let month = currentDate.getMonth() + 1;
+        let year = currentDate.getFullYear();
+
+        const slotDate = day + "_" + month + "_" + year;
+        const slotTime = formattedTime;
+
+        const isSlotAvailable =
+          docInfo.slotsBooked &&
+          docInfo.slotsBooked[slotDate] &&
+          docInfo.slotsBooked[slotDate].includes(slotTime)
+            ? false
+            : true;
+
+        if (isSlotAvailable) {
+          timeSlots.push({
+            dateTime: new Date(currentDate),
+            time: formattedTime,
+          });
+        }
+
         currentDate.setMinutes(currentDate.getMinutes() + 30);
       }
       slotsArray.push(timeSlots);
