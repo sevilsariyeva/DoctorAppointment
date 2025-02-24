@@ -11,15 +11,14 @@ const AdminContextProvider = ({ children }) => {
   const initialToken = localStorage.getItem("aToken") || "";
   const [aToken, setAToken] = useState(initialToken);
   const [doctors, setDoctors] = useState([]);
+  const [appointments, setAppointments] = useState([]);
 
-  // Persist token in localStorage whenever aToken changes
   useEffect(() => {
     if (aToken) {
       localStorage.setItem("aToken", aToken);
     }
   }, [aToken]);
 
-  // Ensure backendUrl is configured correctly
   const backendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
   const getAllDoctors = async () => {
@@ -47,6 +46,26 @@ const AdminContextProvider = ({ children }) => {
       toast.error(error.message || "Network error");
     }
   };
+  const getAllAppointments = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/admin/appointments`, {
+        headers: { aToken },
+      });
+
+      console.log("Response from backend:", data); // Debug üçün
+
+      if (data.success && Array.isArray(data.data)) {
+        setAppointments(data.data);
+        console.log("All appointments:", data.data);
+      } else {
+        toast.error("Invalid response format from server.");
+      }
+    } catch (error) {
+      console.error("Error fetching appointments:", error);
+      toast.error(error.message);
+    }
+  };
+
   const updateDoctorAvailability = async (doctorId, availability) => {
     if (!doctorId) {
       console.error("Doctor ID is missing");
@@ -86,6 +105,9 @@ const AdminContextProvider = ({ children }) => {
     getAllDoctors,
     updateDoctorAvailability,
     handleAvailabilityChange,
+    appointments,
+    setAppointments,
+    getAllAppointments,
   };
 
   return (
@@ -93,7 +115,6 @@ const AdminContextProvider = ({ children }) => {
   );
 };
 
-// Prop validation for children
 AdminContextProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };

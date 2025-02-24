@@ -2,9 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+
 const MyAppointments = () => {
   const { doctors, backendUrl, token, fetchDoctors } = useContext(AppContext);
   const [appointments, setAppointments] = useState([]);
+  const [paymentStatus, setPaymentStatus] = useState({});
   const months = [
     "",
     "Jan",
@@ -20,12 +22,14 @@ const MyAppointments = () => {
     "Nov",
     "Dec",
   ];
+
   const slotDateFormat = (slotDate) => {
     const dateArray = slotDate.split("_");
     return (
       dateArray[0] + " " + months[Number(dateArray[1])] + " " + dateArray[2]
     );
   };
+
   const getUserAppointments = async () => {
     try {
       const { data } = await axios.get(backendUrl + "/api/user/appointments", {
@@ -63,6 +67,34 @@ const MyAppointments = () => {
       toast.error("Failed to cancel the appointment.");
     }
   };
+
+  const handlePaymentRequest = async (appointmentId) => {
+    try {
+      const { data } = await axios.post(
+        backendUrl + "/api/user/create-payment",
+        {
+          appointmentId,
+        }
+      );
+
+      console.log("Response from backend:", data); // Log the full response
+
+      if (data && data.success) {
+        // Ensure data and success are available
+        setPaymentStatus((prevStatus) => ({
+          ...prevStatus,
+          [appointmentId]: "Paid",
+        }));
+        toast.success("Payment successful!");
+      } else {
+        toast.error("Payment failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error during payment request:", error);
+      toast.error("An error occurred while processing the payment.");
+    }
+  };
+
   useEffect(() => {
     if (token) {
       getUserAppointments();
@@ -104,9 +136,17 @@ const MyAppointments = () => {
             </div>
             <div></div>
             <div className="flex flex-col gap-2 justify-end">
-              {!item.cancelled && (
-                <button className="text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300">
+              {!item.cancelled && paymentStatus[item.id] !== "Paid" && (
+                <button
+                  onClick={() => handlePaymentRequest(item.id)}
+                  className="text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300"
+                >
                   Pay Online
+                </button>
+              )}
+              {paymentStatus[item.id] === "Paid" && (
+                <button className="sm:min-w-48 py-2 border rounded text-green-500">
+                  Paid
                 </button>
               )}
               {!item.cancelled && (

@@ -10,7 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const { setAToken, backendUrl } = useContext(AdminContext);
-  console.log("Backend URL:", backendUrl); // Ensure the correct URL is printed
+  console.log("Backend URL:", backendUrl);
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
@@ -25,12 +25,12 @@ const Login = () => {
           password,
         });
         console.log("API Response:", data);
+        console.log("Token received:", data.token);
 
-        if (data?.token?.result) {
-          const token = data.token.result; // Extract the token from the result property
+        if (data?.token) {
+          const token = data.token;
           console.log("Token received:", token);
 
-          // Store the token in localStorage
           localStorage.setItem("aToken", token);
           setAToken(token);
           toast.success("Login successful!");
