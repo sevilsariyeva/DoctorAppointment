@@ -39,6 +39,15 @@ const MyAppointments = () => {
       if (data.success) {
         setAppointments(data.appointments.reverse());
         console.log(data.appointments);
+
+        const updatedStatus = {};
+        data.appointments.forEach((appointment) => {
+          if (appointment.amount) {
+            updatedStatus[appointment.id] = "Paid";
+          }
+        });
+
+        setPaymentStatus(updatedStatus);
       }
     } catch (error) {
       console.log(error);
@@ -68,30 +77,50 @@ const MyAppointments = () => {
     }
   };
 
-  const handlePaymentRequest = async (appointmentId) => {
+  const handlePaymentRequest = async (appointment) => {
     try {
+      console.log("Appointment Data:", appointment);
+      const response = await axios.get(
+        `${backendUrl}/api/user/doctor/${appointment}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log("Response", response);
+      const doctor = response.data.doctor;
+      if (!doctor || !doctor.fees) {
+        throw new Error("Doctor's fee is not available.");
+      }
+
+      const paymentAmount = doctor.fees;
+
       const { data } = await axios.post(
         backendUrl + "/api/user/create-payment",
-        {
-          appointmentId,
-        }
+        { appointmentId: appointment, amount: paymentAmount },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      console.log("Response from backend:", data); // Log the full response
+      console.log("Response from backend:", data);
 
       if (data && data.success) {
-        // Ensure data and success are available
+        toast.success("Payment successful!");
+
+        setAppointments((prevAppointments) =>
+          prevAppointments.map((item) =>
+            item.id === appointment ? { ...item, amount: paymentAmount } : item
+          )
+        );
+
         setPaymentStatus((prevStatus) => ({
           ...prevStatus,
-          [appointmentId]: "Paid",
+          [appointment]: "Paid",
         }));
-        toast.success("Payment successful!");
       } else {
         toast.error("Payment failed. Please try again.");
       }
     } catch (error) {
       console.error("Error during payment request:", error);
-      toast.error("An error occurred while processing the payment.");
+      toast.error(
+        error.message || "An error occurred while processing the payment."
+      );
     }
   };
 

@@ -4,10 +4,15 @@ import { AdminContext } from "../../context/AdminContext";
 import { useEffect } from "react";
 import { AppContext } from "../../context/AppContext";
 import { assets } from "../../assets/assets";
-
+import axios from "axios";
 const AllAppointments = () => {
-  const { aToken, appointments, getAllAppointments, backendUrl } =
-    useContext(AdminContext);
+  const {
+    aToken,
+    appointments,
+    getAllAppointments,
+    backendUrl,
+    cancelAppointment,
+  } = useContext(AdminContext);
   const { calculateAge, slotDateFormat, currency } = useContext(AppContext);
 
   useEffect(() => {
@@ -65,6 +70,7 @@ const AllAppointments = () => {
               <img
                 className="w-10 cursor-pointer"
                 src={assets.cancel_icon}
+                onClick={() => cancelAppointment(item.id)}
                 alt=""
               />
             )}

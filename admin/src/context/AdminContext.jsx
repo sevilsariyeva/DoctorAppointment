@@ -65,6 +65,25 @@ const AdminContextProvider = ({ children }) => {
       toast.error(error.message);
     }
   };
+  const cancelAppointment = async (appointmentId) => {
+    try {
+      console.log(appointmentId);
+      const response = await axios.delete(
+        `${backendUrl}/api/admin/cancel-appointment/${appointmentId}`,
+        {
+          headers: { Authorization: `Bearer ${aToken}` },
+        }
+      );
+
+      if (response.data.success) {
+        getAllAppointments();
+      } else {
+        console.log("Failed to cancel appointment");
+      }
+    } catch (error) {
+      console.error("Error canceling appointment:", error);
+    }
+  };
 
   const updateDoctorAvailability = async (doctorId, availability) => {
     if (!doctorId) {
@@ -108,6 +127,7 @@ const AdminContextProvider = ({ children }) => {
     appointments,
     setAppointments,
     getAllAppointments,
+    cancelAppointment,
   };
 
   return (
