@@ -3,15 +3,14 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-// Create the context
 export const AdminContext = createContext();
 
-// Define the context provider
 const AdminContextProvider = ({ children }) => {
   const initialToken = localStorage.getItem("aToken") || "";
   const [aToken, setAToken] = useState(initialToken);
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [dashData, setDashData] = useState(false);
 
   useEffect(() => {
     if (aToken) {
@@ -118,6 +117,21 @@ const AdminContextProvider = ({ children }) => {
     }
   };
 
+  const getDashData = async () => {
+    try {
+      const { data } = await axios.get(backendUrl + "/api/admin/dashboard", {
+        headers: { aToken },
+      });
+      if (data.success) {
+        setDashData(data.dashData);
+        console.log(data.dashData);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
   const value = {
     aToken,
     setAToken,
@@ -130,6 +144,8 @@ const AdminContextProvider = ({ children }) => {
     setAppointments,
     getAllAppointments,
     cancelAppointment,
+    dashData,
+    getDashData,
   };
 
   return (

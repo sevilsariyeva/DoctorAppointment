@@ -44,7 +44,7 @@ const AddDoctor = () => {
       const { data } = await axios.post(
         `${backendUrl}/api/admin/add-doctor`,
         formData,
-        { headers: { Authorization: `Bearer ${aToken?.token || aToken}` } } // Ensure it's a string
+        { headers: { Authorization: `Bearer ${aToken?.token || aToken}` } }
       );
       if (data.success) {
         toast.success(data.message);

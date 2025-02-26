@@ -15,16 +15,7 @@ const useAutoLogout = () => {
       const expiryTime = decoded.exp * 1000;
       const currentTime = Date.now();
       const timeLeft = expiryTime - currentTime;
-      console.log("Decoded token:", decoded);
-      console.log("Token expiration (exp):", decoded.exp);
-      console.log("Expiry Time (ms):", expiryTime);
-      console.log("Current Time (ms):", currentTime);
-      console.log("Time Left (ms):", timeLeft);
-      console.log(
-        `Token bitmə vaxtı: ${new Date(expiryTime).toLocaleString()}`
-      );
-      console.log(`Hazırkı vaxt: ${new Date(currentTime).toLocaleString()}`);
-      console.log(`Qalan vaxt (ms): ${timeLeft}`);
+
       if (timeLeft <= 0) {
         logout();
       } else {
