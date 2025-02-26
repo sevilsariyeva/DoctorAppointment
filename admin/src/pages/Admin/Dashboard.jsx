@@ -12,7 +12,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (aToken) {
       getDashData();
-      console.log("appoint", dashData.latestAppointments);
+      console.log("appoint", dashData);
     }
   }, [aToken]);
   return (
