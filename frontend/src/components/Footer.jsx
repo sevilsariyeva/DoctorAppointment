@@ -1,6 +1,6 @@
 import React from "react";
 import { assets } from "../assets/assets";
-
+import { NavLink } from "react-router-dom";
 const Footer = () => {
   return (
     <div className="md:mx-10">
@@ -19,10 +19,18 @@ const Footer = () => {
         <div>
           <p className="text-xl font-medium mb-5">COMPANY</p>
           <ul className="flex flex-col gap-2 text-gray-600">
-            <li>Home</li>
-            <li>About</li>
-            <li>Contact us</li>
-            <li>Privacy policy</li>
+            <NavLink to="/" className="hover:text-primary">
+              <li className="py-1">Home</li>
+            </NavLink>
+            <NavLink to="/about" className="hover:text-primary">
+              <li className="py-1">About</li>
+            </NavLink>
+            <NavLink to="/contact" className="hover:text-primary">
+              <li className="py-1">Contact Us</li>
+            </NavLink>
+            <NavLink to="/" className="hover:text-primary">
+              <li className="py-1">Privacy Policy</li>
+            </NavLink>
           </ul>
         </div>
         {/* ---------Right Section--------- */}
@@ -30,7 +38,7 @@ const Footer = () => {
           <p className="text-xl font-medium mb-5">GET IN TOUCH</p>
           <ul className="flex flex-col gap-2 text-gray-600">
             <li>+994 5151515</li>
-            <li>hospital@gmail.com</li>
+            <li>docapp@gmail.com</li>
           </ul>
         </div>
       </div>
@@ -38,7 +46,7 @@ const Footer = () => {
       <div>
         <hr />
         <p className="py-5 text-sm text-center">
-          Copyright 2024@ Prescripto - All Rights Reserved.
+          Copyright 2024@ DocApp - All Rights Reserved.
         </p>
       </div>
     </div>

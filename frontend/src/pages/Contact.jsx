@@ -23,7 +23,7 @@ const Contact = () => {
           </p>
           <p className="text-gray-500">
             Tel: (000) 000-0000 <br />
-            Email: greatstackdev@gmail.com
+            Email: docapp@gmail.com
           </p>
           {/* <p className="font-semibold text-lg text-gray-600">
             CAREERS AT PRESCRIPTO

@@ -41,7 +41,7 @@ const Doctors = () => {
             "General physician",
             "Gynecologist",
             "Dermatologist",
-            "Pediatricians",
+            "Pediatrician",
             "Neurologist",
             "Gastroenterologist",
           ].map((specialty) => (

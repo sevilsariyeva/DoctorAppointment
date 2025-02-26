@@ -5,7 +5,7 @@ import { useState } from "react";
 import Footer from "./Footer";
 
 const RelatedDoctors = ({ speciality, docId }) => {
-  const { doctors } = useContext(AppContext);
+  const { doctors, backendUrl } = useContext(AppContext);
 
   const [relDoc, setRelDocs] = useState([]);
 
@@ -35,7 +35,7 @@ const RelatedDoctors = ({ speciality, docId }) => {
   useEffect(() => {
     if (doctors.length > 0 && speciality) {
       const doctorsData = doctors.filter(
-        (doc) => doc.speciality === speciality && doc._id !== docId
+        (doc) => doc.speciality === speciality && doc.id !== docId
       );
       setRelDocs(doctorsData);
     }
@@ -53,13 +53,13 @@ const RelatedDoctors = ({ speciality, docId }) => {
             onClick={() => {
               smoothScrollToTop(800);
               setTimeout(() => {
-                navigate(`/appointment/${item._id}`);
+                navigate(`/appointment/${item.id}`);
               }, 300);
             }}
             className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500"
             key={index}
           >
-            <img className="bg-blue-50" src={item.image} alt="" />
+            <img className="bg-blue-50" src={backendUrl + item.image} alt="" />
             <div className="p-4">
               <div className="flex items-center gap-2 text-sm text-center text-green-500">
                 <p className="w-2 h-2 bg-green-500 rounded-full"></p>
@@ -73,7 +73,7 @@ const RelatedDoctors = ({ speciality, docId }) => {
       </div>
       <button
         onClick={() => {
-          navigate(`doctors`);
+          navigate(`/doctors`);
           scrollTo(0, 0);
         }}
         className="bg-blue-50 text-gray-600 px-12 py-3 rounded-full mt-10"

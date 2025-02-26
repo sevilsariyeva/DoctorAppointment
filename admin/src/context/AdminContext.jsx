@@ -52,7 +52,7 @@ const AdminContextProvider = ({ children }) => {
         headers: { aToken },
       });
 
-      console.log("Response from backend:", data); // Debug üçün
+      console.log("Response from backend:", data);
 
       if (data.success && Array.isArray(data.data)) {
         setAppointments(data.data);
@@ -76,12 +76,14 @@ const AdminContextProvider = ({ children }) => {
       );
 
       if (response.data.success) {
+        toast.success("Appointment cancelled successfully");
         getAllAppointments();
       } else {
-        console.log("Failed to cancel appointment");
+        toast.error(response.data.message || "Failed to cancel appointment");
       }
     } catch (error) {
       console.error("Error canceling appointment:", error);
+      toast.error("Network error or server issue");
     }
   };
 
