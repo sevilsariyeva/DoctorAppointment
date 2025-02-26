@@ -2,8 +2,10 @@ import React, { useContext, useState, useEffect } from "react";
 import { assets } from "../assets/assets";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
+import useAutoLogout from "../hooks/useAutoLogout";
 
 const Navbar = () => {
+  useAutoLogout();
   const navigate = useNavigate();
   const { token, setToken, backendUrl, userData, fetchUserProfile } =
     useContext(AppContext);

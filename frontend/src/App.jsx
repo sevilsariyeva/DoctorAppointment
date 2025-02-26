@@ -11,7 +11,9 @@ import Appointment from "./pages/Appointment";
 import Navbar from "./components/Navbar";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useAutoLogout from "./hooks/useAutoLogout";
 const App = () => {
+  useAutoLogout();
   return (
     <div className="mx-4 sm:mx-[10%]">
       <ToastContainer />

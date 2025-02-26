@@ -22,6 +22,7 @@ const Login = () => {
           fullName,
           password,
           email,
+          imageUrl: "/assets/upload_area/default_profile.png",
         });
         if (data.success) {
           localStorage.setItem("token", data.token);
