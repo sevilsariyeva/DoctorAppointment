@@ -8,16 +8,32 @@ const Navbar = () => {
   const { token, setToken, backendUrl, userData, fetchUserProfile } =
     useContext(AppContext);
   const [showMenu, setShowMenu] = useState(false);
-  const [profileFetched, setProfileFetched] = useState(false); // State to track if profile has been fetched
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [profileFetched, setProfileFetched] = useState(false);
 
   useEffect(() => {
     if (token && !profileFetched) {
-      // Check if token is available and profile has not been fetched
       fetchUserProfile();
-      setProfileFetched(true); // Set profileFetched to true to prevent re-fetching
+      setProfileFetched(true);
       console.log(token);
     }
   }, [token, fetchUserProfile, profileFetched]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(".profile-dropdown")) {
+        setShowDropdown(false);
+      }
+    };
+
+    if (showDropdown) {
+      document.addEventListener("click", handleClickOutside);
+    } else {
+      document.removeEventListener("click", handleClickOutside);
+    }
+
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [showDropdown]);
 
   const logout = () => {
     setToken(null);
@@ -51,7 +67,10 @@ const Navbar = () => {
 
       <div className="flex items-center gap-4">
         {token ? (
-          <div className="flex items-center gap-2 cursor-pointer group relative">
+          <div
+            className="relative flex items-center gap-2 cursor-pointer profile-dropdown"
+            onClick={() => setShowDropdown(!showDropdown)}
+          >
             <img
               className="w-8 h-8 rounded-full object-cover"
               src={
@@ -68,8 +87,8 @@ const Navbar = () => {
               src={assets.dropdown_icon}
               alt="Dropdown Icon"
             />
-            <div className="absolute top-14 right-0 text-base font-medium text-gray-600 z-20 hidden group-hover:block">
-              <div className="min-w-48 bg-stone-100 rounded shadow-lg flex flex-col gap-4 p-4">
+            {showDropdown && (
+              <div className="absolute top-14 right-0 text-base font-medium text-gray-600 z-20 bg-stone-100 rounded shadow-lg flex flex-col gap-4 p-4 min-w-48">
                 <p
                   onClick={() => navigate("/my-profile")}
                   className="hover:text-black cursor-pointer"
@@ -86,7 +105,7 @@ const Navbar = () => {
                   Log out
                 </p>
               </div>
-            </div>
+            )}
           </div>
         ) : (
           <button
@@ -99,7 +118,7 @@ const Navbar = () => {
 
         {/* Mobile Menu Icon */}
         <img
-          onClick={() => setShowMenu(true)}
+          onClick={() => setShowMenu(!showMenu)}
           className="w-6 md:hidden cursor-pointer"
           src={assets.menu_icon}
           alt="Menu Icon"
@@ -112,6 +131,12 @@ const Navbar = () => {
           } w-full h-full md:hidden`}
         >
           {/* Mobile menu content */}
+          <button
+            onClick={() => setShowMenu(false)}
+            className="absolute top-4 right-4 text-xl"
+          >
+            ✕
+          </button>
         </div>
       </div>
     </div>
