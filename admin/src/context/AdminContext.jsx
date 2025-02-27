@@ -64,19 +64,24 @@ const AdminContextProvider = ({ children }) => {
       toast.error(error.message);
     }
   };
-  const cancelAppointment = async (appointmentId) => {
+  const cancelAppointment = async (appointmentId, isDashboard = false) => {
     try {
       console.log(appointmentId);
       const response = await axios.delete(
         `${backendUrl}/api/admin/cancel-appointment/${appointmentId}`,
         {
-          headers: { Authorization: `Bearer ${aToken}` },
+          headers: {
+            Authorization: `Bearer ${aToken}`,
+            "Content-Type": "application/json",
+          },
+          data: { userId: "UserId", appointmentId },
         }
       );
 
       if (response.data.success) {
         toast.success("Appointment cancelled successfully");
-        getAllAppointments();
+
+        isDashboard ? getDashData() : getAllAppointments();
       } else {
         toast.error(response.data.message || "Failed to cancel appointment");
       }
@@ -124,7 +129,7 @@ const AdminContextProvider = ({ children }) => {
       });
       if (data) {
         setDashData(data);
-        console.log("admindata",data)
+        console.log("admindata", data);
       } else {
         toast.error(data.message);
       }

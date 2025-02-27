@@ -64,10 +64,14 @@ const MyAppointments = () => {
       const response = await axios.delete(
         `${backendUrl}/api/user/cancel-appointment/${appointmentId}`,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          data: { userId: "UserId", appointmentId },
         }
       );
-
+      console.log(response);
       if (response.data.success) {
         toast.success("Appointment canceled successfully.");
         getUserAppointments();
@@ -80,6 +84,7 @@ const MyAppointments = () => {
       toast.error("Failed to cancel the appointment.");
     }
   };
+
   const handlePaymentRequest = async (appointment) => {
     try {
       console.log("Appointment Data:", appointment);
