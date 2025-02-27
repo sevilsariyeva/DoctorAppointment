@@ -3,6 +3,7 @@ import { assets } from "../assets/assets.js";
 import { AdminContext } from "../context/AdminContext.jsx";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { DoctorContext } from "../context/DoctorContext.jsx";
 
 const Login = () => {
   const [state, setState] = useState("Admin");
@@ -10,35 +11,36 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const { setAToken, backendUrl } = useContext(AdminContext);
+  const { setDToken } = useContext(DoctorContext);
   console.log("Backend URL:", backendUrl);
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
-    console.log("Login button clicked!");
     try {
-      console.log("Submitting login request...");
-      console.log(backendUrl + "/api/admin/login");
-      console.log(state);
       if (state === "Admin") {
         const { data } = await axios.post(backendUrl + "/api/admin/login", {
           email,
           password,
         });
-        console.log("API Response:", data);
-        console.log("Token received:", data.token);
-
         if (data?.token) {
-          const token = data.token;
-          console.log("Token received:", token);
-
-          localStorage.setItem("aToken", token);
-          setAToken(token);
+          localStorage.setItem("aToken", data.token);
+          setAToken(data.token);
           toast.success("Login successful!");
         } else {
           toast.error(data?.message || "Login failed!");
         }
       } else {
-        console.log("Doctor login not implemented yet.");
+        const { data } = await axios.post(backendUrl + "/api/doctor/login", {
+          email,
+          password,
+        });
+        if (data?.token) {
+          localStorage.setItem("dToken", data.token);
+          setDToken(data.token);
+          toast.success("Login successful!");
+        } else {
+          toast.error(data?.message || "Login failed!");
+        }
       }
     } catch (error) {
       console.error("Login Error:", error.response || error.message);

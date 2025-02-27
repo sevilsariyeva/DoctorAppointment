@@ -10,11 +10,10 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const logout = () => {
-    navigate("/");
-    aToken && setAToken("");
-    aToken && localStorage.removeItem("aToken");
+    setAToken(null);
+    localStorage.removeItem("aToken");
+    navigate("/login");
   };
-
   return (
     <div className="flex justify-between items-center px-4 sm:px-10 py-3 border-b bg-white">
       <div className="flex items-center gap-2 text-xs">
@@ -23,7 +22,10 @@ const Navbar = () => {
           {aToken ? "Admin" : "Doctor"}
         </p>
       </div>
-      <button className="bg-primary text-white text-sm px-10 py-2 rounded-full">
+      <button
+        onClick={() => logout()}
+        className="bg-primary text-white text-sm px-10 py-2 rounded-full"
+      >
         Logout
       </button>
     </div>
