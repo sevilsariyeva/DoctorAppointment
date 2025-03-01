@@ -72,7 +72,7 @@ const AdminContextProvider = ({ children }) => {
       console.log("Response from backend:", data);
 
       if (Array.isArray(data)) {
-        setAppointments(data);
+        setAppointments(data.reverse());
         console.log("All appointments:", data);
       } else {
         toast.error("Invalid response format from server.");

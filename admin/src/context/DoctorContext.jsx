@@ -43,8 +43,8 @@ const DoctorContextProvider = (props) => {
         }
       );
       if (data.success) {
-        console.log(data.appointments);
-        setAppointments(data.appointments);
+        console.log(data.appointments.reverse());
+        setAppointments(data.appointments.reverse());
       }
     } catch (error) {
       toast.error(error.message);

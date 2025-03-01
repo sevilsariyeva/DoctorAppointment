@@ -29,7 +29,6 @@ const AppContextProvider = ({ children }) => {
     if (newToken) {
       localStorage.setItem("token", newToken);
       localStorage.setItem("tokenExpiry", expiryTime);
-      console.log(expiryTime);
     } else {
       localStorage.removeItem("token");
       localStorage.removeItem("tokenExpiry");
