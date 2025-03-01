@@ -5,8 +5,14 @@ import { AppContext } from "../../context/AppContext";
 import { assets } from "../../assets/assets";
 
 const DoctorAppointments = () => {
-  const { dToken, getAppointments, appointments, setAppointments } =
-    useContext(DoctorContext);
+  const {
+    dToken,
+    getAppointments,
+    appointments,
+    setAppointments,
+    cancelAppointment,
+    completeAppointment,
+  } = useContext(DoctorContext);
   const { backendUrl, calculateAge, currency, slotDateFormat } =
     useContext(AppContext);
 
@@ -65,26 +71,19 @@ const DoctorAppointments = () => {
                 <img
                   className="w-10 cursor-pointer"
                   src={assets.cancel_icon}
+                  onClick={() => {
+                    cancelAppointment(item.id, false);
+                  }}
                   alt=""
                 />
                 <img
                   className="w-10 cursor-pointer"
+                  onClick={() => completeAppointment(item.id)}
                   src={assets.tick_icon}
                   alt=""
                 />
               </div>
             )}
-
-            {/* {item.cancelled ? (
-              <p className="text-red-400 text-xs font-medium ">Cancelled</p>
-            ) : (
-              <img
-                className="w-10 cursor-pointer"
-                src={assets.cancel_icon}
-                onClick={() => cancelAppointment(item.id, false)}
-                alt=""
-              />
-            )} */}
           </div>
         ))}
       </div>
