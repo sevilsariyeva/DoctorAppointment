@@ -7,8 +7,14 @@ import useAutoLogout from "../hooks/useAutoLogout";
 const Navbar = () => {
   useAutoLogout();
   const navigate = useNavigate();
-  const { token, setToken, backendUrl, userData, fetchUserProfile } =
-    useContext(AppContext);
+  const {
+    token,
+    setToken,
+    setAuthToken,
+    backendUrl,
+    userData,
+    fetchUserProfile,
+  } = useContext(AppContext);
   const [showMenu, setShowMenu] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [profileFetched, setProfileFetched] = useState(false);
@@ -17,7 +23,6 @@ const Navbar = () => {
     if (token && !profileFetched) {
       fetchUserProfile();
       setProfileFetched(true);
-      console.log(token);
     }
   }, [token, fetchUserProfile, profileFetched]);
 
@@ -39,6 +44,7 @@ const Navbar = () => {
 
   const logout = () => {
     setToken(null);
+    setAuthToken("");
     localStorage.removeItem("token");
     navigate("/login");
   };

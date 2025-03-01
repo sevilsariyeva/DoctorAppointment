@@ -12,9 +12,10 @@ const AppContextProvider = ({ children }) => {
     const storedToken = localStorage.getItem("token");
     const expiryTime = localStorage.getItem("tokenExpiry");
 
-    if (storedToken && expiryTime && Date.now() < Number(expiryTime)) {
+    if (storedToken && expiryTime && Date.now() < Number(expiryTime) * 1000) {
       return storedToken;
     }
+
     localStorage.removeItem("token");
     localStorage.removeItem("tokenExpiry");
     return "";
@@ -24,11 +25,11 @@ const AppContextProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
   const [token, setToken] = useState(getValidToken());
 
-  const setAuthToken = (newToken) => {
+  const setAuthToken = (newToken, expiryTime) => {
     if (newToken) {
-      const expiryTime = Date.now() + 120 * 60 * 1000;
       localStorage.setItem("token", newToken);
       localStorage.setItem("tokenExpiry", expiryTime);
+      console.log(expiryTime);
     } else {
       localStorage.removeItem("token");
       localStorage.removeItem("tokenExpiry");
@@ -83,7 +84,8 @@ const AppContextProvider = ({ children }) => {
         setDoctors,
         backendUrl,
         token,
-        setToken: setAuthToken,
+        setToken,
+        setAuthToken,
         userData,
         setUserData,
         fetchUserProfile,

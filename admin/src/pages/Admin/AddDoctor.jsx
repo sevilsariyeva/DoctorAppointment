@@ -38,13 +38,12 @@ const AddDoctor = () => {
       formData.append("degree", degree);
       formData.append("address1", address1);
       formData.append("address2", address2);
-      console.log("Token being sent:", aToken?.token || aToken);
-      console.log({ Authorization: `Bearer ${aToken?.token || aToken}` });
+      console.log({ Authorization: `Bearer ${aToken}` });
 
       const { data } = await axios.post(
         `${backendUrl}/api/admin/add-doctor`,
         formData,
-        { headers: { Authorization: `Bearer ${aToken?.token || aToken}` } }
+        { headers: { Authorization: `Bearer ${aToken}` } }
       );
       if (data.success) {
         toast.success(data.message);

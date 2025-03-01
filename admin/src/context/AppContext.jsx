@@ -1,5 +1,4 @@
 import { createContext } from "react";
-
 export const AppContext = createContext();
 
 const AppContextProvider = (props) => {
@@ -19,6 +18,7 @@ const AppContextProvider = (props) => {
     "Nov",
     "Dec",
   ];
+  const backendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
   const slotDateFormat = (slotDate) => {
     const dateArray = slotDate.split("_");
     return (
@@ -36,7 +36,9 @@ const AppContextProvider = (props) => {
     let age = today.getFullYear() - birthDate.getFullYear();
     return age;
   };
+
   const value = {
+    backendUrl,
     calculateAge,
     slotDateFormat,
     currency,

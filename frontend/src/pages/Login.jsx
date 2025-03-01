@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const { backendUrl, token, setToken } = useContext(AppContext);
+  const { backendUrl, token, setToken, setAuthToken } = useContext(AppContext);
   const navigate = useNavigate();
 
   const [state, setState] = useState("Sign Up");
@@ -36,8 +36,13 @@ const Login = () => {
           email,
         });
         if (data.success) {
+          console.log("data success", data);
           localStorage.setItem("token", data.token);
-          setToken(data.token);
+          localStorage.setItem(
+            "tokenExpiry",
+            new Date(data.expiryTime).getTime()
+          );
+          setAuthToken(data.token, new Date(data.expiryTime).getTime());
         } else {
           toast.error(data.message);
         }

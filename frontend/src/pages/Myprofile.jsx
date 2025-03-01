@@ -30,7 +30,7 @@ const MyProfile = () => {
         formData.append("Address.Line1", userData.address.line1);
       if (userData.address?.line2)
         formData.append("Address.Line2", userData.address.line2);
-      if (userData.gender) formData.append("Gender", userData.gender);
+      formData.append("Gender", userData.gender ? userData.gender : "Male");
       if (userData.dob) {
         const formattedDob = new Date(userData.dob).toISOString();
         formData.append("Dob", formattedDob);
@@ -40,7 +40,7 @@ const MyProfile = () => {
         console.log("Uploading Image:", imageUrl);
         formData.append("Image", imageUrl);
       }
-
+      console.log(userData.gender);
       const response = await axios.put(
         `${backendUrl}/api/user/update-profile`,
         formData,
@@ -204,7 +204,7 @@ const MyProfile = () => {
                 onChange={(e) =>
                   setUserData((prev) => ({ ...prev, gender: e.target.value }))
                 }
-                value={userData.gender || ""}
+                value={userData.gender || "Male"} // Default olaraq "Male" edir
               >
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>

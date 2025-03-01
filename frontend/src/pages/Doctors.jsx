@@ -66,7 +66,7 @@ const Doctors = () => {
               <div
                 onClick={() => navigate(`/appointment/${item.id}`)}
                 className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer transition-all duration-300 ease-in-out transform hover:translate-y-[-5px] active:translate-y-[5px]"
-                key={item._id || Math.random()}
+                key={item.id || Math.random()}
               >
                 <img
                   className="bg-blue-50"

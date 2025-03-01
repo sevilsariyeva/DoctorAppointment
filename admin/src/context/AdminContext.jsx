@@ -6,20 +6,36 @@ import { toast } from "react-toastify";
 export const AdminContext = createContext();
 
 const AdminContextProvider = ({ children }) => {
-  const initialToken = localStorage.getItem("aToken") || "";
-  const [aToken, setAToken] = useState(initialToken);
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [dashData, setDashData] = useState(false);
 
-  useEffect(() => {
-    if (aToken) {
-      localStorage.setItem("aToken", aToken);
-    }
-  }, [aToken]);
-
   const backendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
+  const getValidToken = () => {
+    const storedToken = localStorage.getItem("aToken");
+    const expiryTime = localStorage.getItem("aTokenExpiry");
+
+    if (storedToken && expiryTime && Date.now() < Number(expiryTime) * 1000) {
+      return storedToken;
+    }
+
+    localStorage.removeItem("aToken");
+    localStorage.removeItem("aTokenExpiry");
+    return "";
+  };
+  const [aToken, setAToken] = useState(getValidToken());
+
+  const setAuthToken = (newToken, expiryTime) => {
+    if (newToken) {
+      localStorage.setItem("aToken", newToken);
+      localStorage.setItem("aTokenExpiry", expiryTime);
+    } else {
+      localStorage.removeItem("aToken");
+      localStorage.removeItem("aTokenExpiry");
+    }
+    setAToken(newToken);
+  };
   const getAllDoctors = async () => {
     if (!aToken) {
       toast.error("Token is missing.");
@@ -48,14 +64,16 @@ const AdminContextProvider = ({ children }) => {
   const getAllAppointments = async () => {
     try {
       const { data } = await axios.get(`${backendUrl}/api/admin/appointments`, {
-        headers: { aToken },
+        headers: {
+          Authorization: `Bearer ${aToken}`,
+        },
       });
 
       console.log("Response from backend:", data);
 
-      if (data.success && Array.isArray(data.data)) {
-        setAppointments(data.data);
-        console.log("All appointments:", data.data);
+      if (Array.isArray(data)) {
+        setAppointments(data);
+        console.log("All appointments:", data);
       } else {
         toast.error("Invalid response format from server.");
       }
@@ -125,7 +143,7 @@ const AdminContextProvider = ({ children }) => {
   const getDashData = async () => {
     try {
       const { data } = await axios.get(backendUrl + "/api/admin/dashboard", {
-        headers: { aToken },
+        headers: { Authorization: `Bearer ${aToken}` },
       });
       if (data) {
         setDashData(data);
@@ -151,6 +169,7 @@ const AdminContextProvider = ({ children }) => {
     cancelAppointment,
     dashData,
     getDashData,
+    setAuthToken,
   };
 
   return (

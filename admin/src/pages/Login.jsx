@@ -4,15 +4,15 @@ import { AdminContext } from "../context/AdminContext.jsx";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { DoctorContext } from "../context/DoctorContext.jsx";
+import { AppContext } from "../context/AppContext.jsx";
 
 const Login = () => {
   const [state, setState] = useState("Admin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { setAToken, backendUrl } = useContext(AdminContext);
-  const { setDToken } = useContext(DoctorContext);
-  console.log("Backend URL:", backendUrl);
+  const { backendUrl, setAuthToken } = useContext(AdminContext);
+  const { setDAuthToken } = useContext(DoctorContext);
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
@@ -22,24 +22,32 @@ const Login = () => {
           email,
           password,
         });
-        if (data?.token) {
+        if (data.success) {
+          console.log("data success", data);
           localStorage.setItem("aToken", data.token);
-          setAToken(data.token);
-          toast.success("Login successful!");
+          localStorage.setItem(
+            "aTokenExpiry",
+            new Date(data.expiryTime).getTime()
+          );
+          setAuthToken(data.token, new Date(data.expiryTime).getTime());
         } else {
-          toast.error(data?.message || "Login failed!");
+          toast.error(data.message);
         }
       } else {
         const { data } = await axios.post(backendUrl + "/api/doctor/login", {
           email,
           password,
         });
-        if (data?.token) {
+        if (data.success) {
+          console.log("data success", data);
           localStorage.setItem("dToken", data.token);
-          setDToken(data.token);
-          toast.success("Login successful!");
+          localStorage.setItem(
+            "dTokenExpiry",
+            new Date(data.expiryTime).getTime()
+          );
+          setDAuthToken(data.token, new Date(data.expiryTime).getTime());
         } else {
-          toast.error(data?.message || "Login failed!");
+          toast.error(data.message);
         }
       }
     } catch (error) {
