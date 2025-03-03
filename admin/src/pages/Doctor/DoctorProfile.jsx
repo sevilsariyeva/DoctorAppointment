@@ -2,32 +2,47 @@ import React, { useContext, useEffect, useState } from "react";
 import { DoctorContext } from "../../context/DoctorContext";
 import { AppContext } from "../../context/AppContext";
 import axios from "axios";
+import { toast } from "react-toastify";
+
 const DoctorProfile = () => {
   const { dToken, profileData, setProfileData, getProfileData } =
     useContext(DoctorContext);
   const { currency, backendUrl } = useContext(AppContext);
-  const { isEdit, setIsEdit } = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
 
   const updateProfile = async () => {
     try {
       const updateData = {
-        address: profileData.address,
+        address1: profileData.address1,
+        address2: profileData.address2,
         fees: profileData.fees,
         available: profileData.available,
       };
-      const { data } = await axios.post(
+      const { data } = await axios.put(
         backendUrl + "/api/doctor/update-profile",
+        updateData,
         {
           headers: { Authorization: `Bearer ${dToken}` },
         }
       );
-    } catch (error) {}
+      if (data.success) {
+        toast.success("Profile updated successfully!");
+        setIsEdit(false);
+        getProfileData();
+      } else {
+        toast.error(data.message || "Profile update failed!");
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
+
   useEffect(() => {
     if (dToken) {
       getProfileData();
     }
   }, [dToken]);
+
   return (
     profileData && (
       <div>
@@ -35,20 +50,20 @@ const DoctorProfile = () => {
           <div>
             <img
               className="bg-primary/80 w-full sm:max-w-64 rounded-lg"
-              src={profileData.image}
+              src={backendUrl + profileData.image}
               alt=""
             />
           </div>
 
-          <div className="flex-1 border border-stone-100 rounded-lg p-8 py-7 bg-white ">
+          <div className="flex-1 border border-stone-100 rounded-lg p-8 py-7 bg-white">
             <p className="flex items-center gap-2 text-3xl font-medium text-gray-700">
               {profileData.name}
             </p>
-            <div className="flex items-center gap-2 mt-1 text-gray-600 ">
+            <div className="flex items-center gap-2 mt-1 text-gray-600">
               <p>
                 {profileData.degree} - {profileData.speciality}
               </p>
-              <button className="py-0.5 px-2 border text-xs rounded-full ">
+              <button className="py-0.5 px-2 border text-xs rounded-full">
                 {profileData.experience}
               </button>
             </div>
@@ -88,14 +103,14 @@ const DoctorProfile = () => {
                     type="text"
                     onChange={(e) =>
                       setProfileData((prev) => ({
-                        prev,
-                        address: { ...prev.address, line1: e.target.value },
+                        ...prev,
+                        address1: e.target.value,
                       }))
                     }
-                    value={profileData.address.line1}
+                    value={profileData.address1}
                   />
                 ) : (
-                  profileData.address.line1
+                  profileData.address1
                 )}
                 <br />
                 {isEdit ? (
@@ -103,14 +118,14 @@ const DoctorProfile = () => {
                     type="text"
                     onChange={(e) =>
                       setProfileData((prev) => ({
-                        prev,
-                        address: { ...prev.address, line2: e.target.value },
+                        ...prev,
+                        address2: e.target.value,
                       }))
                     }
-                    value={profileData.address.line2}
+                    value={profileData.address2}
                   />
                 ) : (
-                  profileData.address.line2
+                  profileData.address2
                 )}
               </p>
             </div>
@@ -120,19 +135,20 @@ const DoctorProfile = () => {
                   isEdit &&
                   setProfileData((prev) => ({
                     ...prev,
-                    available: !prev.avaialble,
+                    available: !prev.available,
                   }))
                 }
                 checked={profileData.available}
                 type="checkbox"
-                name=""
-                id=""
               />
-              <label htmlFor="">Available</label>
+              <label>Available</label>
             </div>
             {isEdit ? (
               <button
-                onClick={() => setIsEdit(false)}
+                onClick={() => {
+                  setIsEdit(false);
+                  updateProfile();
+                }}
                 className="px-4 py-1 border border-primary text-sm rounded-full mt-5 hover:bg-primary hover:text-white transition-all"
               >
                 Save

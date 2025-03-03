@@ -18,19 +18,26 @@ const Appointment = () => {
   const [slotTime, setSlotTime] = useState("");
 
   useEffect(() => {
-    console.log("Doctors:", doctors);
-    console.log("docId:", docId);
+    const fetchDoctorInfo = async () => {
+      if (!docId) return;
 
-    if (doctors.length > 0) {
-      const doc = doctors.find((d) => String(d.id) === String(docId));
-      if (doc) {
-        setDocInfo(doc);
-        console.log("Found doctor:", doc);
-      } else {
-        console.log("Doctor not found!");
+      try {
+        const { data } = await axios.get(`${backendUrl}/api/doctor/${docId}`);
+        console.log(data);
+        if (data.success) {
+          console.log(data);
+          setDocInfo(data.doctor);
+          console.log("Fetched doctor:", data.doctor);
+        } else {
+          console.log("Doctor not found in backend!");
+        }
+      } catch (error) {
+        console.error("Error fetching doctor:", error);
       }
-    }
-  }, [doctors, docId]);
+    };
+
+    fetchDoctorInfo();
+  }, [docId]);
 
   useEffect(() => {
     if (docInfo) {
@@ -102,19 +109,39 @@ const Appointment = () => {
       toast.warn("Login to book appointment");
       return navigate("/login");
     }
-    console.log(userData.id);
+
     if (!userData || !userData.id) {
       toast.error("User information is missing.");
       return;
     }
 
-    try {
-      const date = docSlots[slotIndex][0].dateTime;
-      const day = date.getDate();
-      const month = date.getMonth() + 1;
-      const year = date.getFullYear();
-      const slotDate = `${day}_${month}_${year}`;
+    if (!docInfo?.available) {
+      toast.error("Doctor is not available.");
+      return;
+    }
 
+    if (!slotTime) {
+      toast.error("Please select time.");
+      return;
+    }
+
+    const date = docSlots[slotIndex][0].dateTime;
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    const slotDate = `${day}_${month}_${year}`;
+
+    const isAlreadyBooked =
+      docInfo.slotsBooked &&
+      docInfo.slotsBooked[slotDate] &&
+      docInfo.slotsBooked[slotDate].includes(slotTime);
+
+    if (isAlreadyBooked) {
+      toast.error("This slot time has already booked.");
+      return;
+    }
+
+    try {
       const payload = {
         userId: userData.id,
         docId,
